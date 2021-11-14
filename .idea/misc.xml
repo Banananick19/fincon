@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/FinCon/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.14895833333333333" />
+        <entry key="..\:/FinCon/app/src/main/res/drawable/ic_launcher_background.xml" value="0.14895833333333333" />
+        <entry key="..\:/FinCon/app/src/main/res/layout-w1240dp/content_scrolling.xml" value="0.16331994645247658" />
+        <entry key="..\:/FinCon/app/src/main/res/layout-w936dp/content_scrolling.xml" value="0.190625" />
+        <entry key="..\:/FinCon/app/src/main/res/layout/activity_create_record.xml" value="0.4" />
+        <entry key="..\:/FinCon/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/FinCon/app/src/main/res/layout/activity_records_list.xml" value="0.25416666666666665" />
+        <entry key="..\:/FinCon/app/src/main/res/layout/activity_report.xml" value="0.25271739130434784" />
+        <entry key="..\:/FinCon/app/src/main/res/layout/content_scrolling.xml" value="0.24010416666666667" />
+        <entry key="..\:/FinCon/app/src/main/res/menu/menu_records_list.xml" value="0.25416666666666665" />
+        <entry key="..\:/FinCon/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.14427083333333332" />
+        <entry key="..\:/FinCon/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.14895833333333333" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
