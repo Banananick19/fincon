@@ -15,6 +15,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.coroutines.*
 import org.w3c.dom.Text
 import java.util.*
+import banana.duo.fincon.utils.normalDate;
 
 class CreateRecordActivity : AppCompatActivity() {
 
@@ -30,10 +31,10 @@ class CreateRecordActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_record)
-        dateView = findViewById(R.id.dateView)
+        dateView = findViewById(R.id.dateSelectButton)
         dateView.setText(dateToString(dateSelected))
-        valueInputView = findViewById(R.id.valueInput)
-        descriptionInputView = findViewById(R.id.descriptionInput)
+        valueInputView = findViewById(R.id.valueInputButton)
+        descriptionInputView = findViewById(R.id.descriptionInputButton)
         showCategories()
 
 
@@ -41,18 +42,7 @@ class CreateRecordActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     fun showCategories() {
-        runBlocking {
-            launch(Dispatchers.IO) {
-                categories = CategoryDBContainer.categoryDao.getAllCategories()
-            }
-        }
-        categoriesRadioGroup = findViewById(R.id.categoriesListGroup)
-        for (category in categories) {
-            var button = RadioButton(this)
-            button.setText(category.name)
-            button.setOnTouchListener {v: View, event: MotionEvent -> onTouchCategoryButton(v as RadioButton) }
-            categoriesRadioGroup.addView(button)
-        }
+
     }
 
     fun onTouchCategoryButton(v: RadioButton): Boolean {

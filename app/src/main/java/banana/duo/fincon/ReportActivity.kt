@@ -47,7 +47,6 @@ class ReportActivity : AppCompatActivity() {
     }
 
     fun renderReport(reportMap: Map<String, Int>) {
-        Log.i("check", "report is ${reportMap}")
         val listView: ListView = findViewById(R.id.listReport)
         val adapter: ArrayAdapter<String> = ArrayAdapter(this, android.R.layout.simple_list_item_1, reportMap.keys.map {it}.zip(reportMap.values, String::plus).toTypedArray())
         listView.adapter = adapter
@@ -57,7 +56,8 @@ class ReportActivity : AppCompatActivity() {
         var report: Report? = null
         runBlocking {
             launch(Dispatchers.IO) {
-                report = ReportMaker.makeReport(RecordDBContainer.recordDao.getAllRecords().filter { record -> record.date > datePeriodStart && record.date < datePeriodEnd })
+                val records: List<Record> =RecordDBContainer.recordDao.getAllRecords().filter { record -> record.date > datePeriodStart && record.date < datePeriodEnd }
+                report = ReportMaker.makeReport(records)
             }
         }
         return report
@@ -71,7 +71,6 @@ class ReportActivity : AppCompatActivity() {
             withContext(Dispatchers.IO) {
                 report = getReport()
             }
-            Log.i("check", "tag is ${tag}")
             when(tag) {
                 "showExpences" -> renderReport(report!!.expences)
                 "showIncomes" -> renderReport(report!!.income)

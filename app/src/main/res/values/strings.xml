@@ -10,4 +10,10 @@
     <string name="datePickerInvokerButton">выбор даты</string>
     <string name="expences_show_button">Расходы</string>
     <string name="income_button_name">Доходы</string>
+    <string name="title">FinCon</string>
+    <string name="CategorySelectTitle">Категория</string>
+    <string name="DescriptionSelectTitle">описание</string>
+    <string name="ValueSelectTitle">сумма</string>
+    <string name="DateSelectTitle">дата</string>
+    <string name="CreateRecordSubmitTitle">создать запись</string>
 </resources>

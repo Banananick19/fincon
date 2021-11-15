@@ -13,4 +13,9 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="Button.Main" parent="ThemeOverlay.AppCompat">
+        <item name="background">@drawable/circle_border</item>
+        <item name="colorAccent">@color/buttonMain</item>
+    </style>
 </resources>
