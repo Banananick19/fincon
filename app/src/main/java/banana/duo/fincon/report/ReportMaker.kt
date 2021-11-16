@@ -9,14 +9,14 @@ class ReportMaker {
     companion object {
         fun makeReport(records: List<Record>): Report {
             var expences: Map<String, Int> = HashMap()
-            var incomes: Map<String, Int> = HashMap()
+            var income: Map<String, Int> = HashMap()
             for (record in records) {
                 when {
                     record.value < 0 -> expences = expences.plus(Pair(record.category, record.value + (expences.get(record.category) ?: 0)))
-                    record.value > 0 -> incomes = incomes.plus(Pair(record.category, record.value + (incomes.get(record.category) ?: 0)))
+                    record.value > 0 -> income = income.plus(Pair(record.category, record.value + (income.get(record.category) ?: 0)))
                 }
             }
-            return Report(expences, incomes)
+            return Report(expences, income)
         }
     }
 }

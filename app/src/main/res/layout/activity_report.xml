@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background_main"
     tools:context=".ReportActivity">
 
     <LinearLayout
@@ -11,58 +12,95 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:layout_marginVertical="60dp"
         android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
         <Button
-            android:id="@+id/datePeriodPick"
-            android:layout_width="0dp"
+            android:id="@+id/reportMakeButton"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/fab_margin"
+            android:layout_marginVertical="10dp"
+            android:background="@drawable/backround_button_main"
             android:layout_weight="1"
-            android:onClick="onDateRangePick"
-            android:text="@string/datePickerInvokerButton"
+            android:paddingVertical="10dp"
+            android:textColor="#005892"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:onClick="onReportMake"
+            android:text="@string/reportMakeButton"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/showExpences"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/fab_margin"
-            android:layout_weight="1"
-            android:onClick="onShowReport"
-            android:tag="showExpences"
-            android:text="@string/expences_show_button"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/datePeriodPick" />
-
-        <Button
-            android:id='@+id/showIncomes'
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/fab_margin"
-            android:layout_weight="1"
-            android:onClick="onShowReport"
-            android:tag="showIncomes"
-            android:text="@string/income_button_name"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/datePeriodPick" />
-
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/buttonsLayout" >
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/listReport"/>
+        android:orientation="horizontal"
+        android:layout_marginVertical="40dp"
+        android:id="@+id/chartsLayout"
+        app:layout_constraintTop_toBottomOf="@id/buttonsLayout"
+        >
+
+        <lecho.lib.hellocharts.view.PieChartView
+            android:id="@+id/expencesChart"
+            android:layout_height="200dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            />
+
+        <lecho.lib.hellocharts.view.PieChartView
+            android:id="@+id/incomesChart"
+            android:layout_height="200dp"
+            android:layout_weight="1"
+            android:layout_width="0dp" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/chartsLayout"
+        android:id="@+id/labelsLayout">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:textColor="@color/textMain"
+            android:layout_weight="1"
+            android:text="@string/Expences"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="30sp"
+            android:textColor="@color/textMain"
+            android:gravity="center"
+            android:text="@string/Incomes"/>
+    </LinearLayout>
+
+    <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            android:layout_marginVertical="20dp"
+            app:layout_constraintTop_toBottomOf="@id/labelsLayout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:ignore="Suspicious0dp">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/categoriesListLayout">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp" />
+            </LinearLayout>
+    </ScrollView>
 
 
 

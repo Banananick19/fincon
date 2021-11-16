@@ -15,8 +15,5 @@ data class Record (
 
     var value: Int,
 
-    var description: String?,
-
-
     var date: Date
 )

@@ -16,4 +16,9 @@
     <string name="ValueSelectTitle">сумма</string>
     <string name="DateSelectTitle">дата</string>
     <string name="CreateRecordSubmitTitle">создать запись</string>
+    <string name="descriptionInputDialogTitle">Описание</string>
+    <string name="valueInputDialogTitle">Значение</string>
+    <string name="Expences">Расходы</string>
+    <string name="Incomes">Доходы</string>
+    <string name="reportMakeButton">Отчёт</string>
 </resources>

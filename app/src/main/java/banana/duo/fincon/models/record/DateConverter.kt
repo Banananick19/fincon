@@ -1,6 +1,7 @@
 package banana.duo.fincon.models.record
 
 import androidx.room.TypeConverter
+import banana.duo.fincon.db.CategoryDBContainer
 import java.util.*
 
 class DateConverter {
@@ -26,7 +27,7 @@ class DateConverter {
         @TypeConverter
         @JvmStatic
         fun toCategory(categoryName: String): Category {
-            return Category(0, categoryName)
+            return CategoryDBContainer.categoryDao.getAllCategories().find {category -> category.name == categoryName }!!
         }
         }
 }

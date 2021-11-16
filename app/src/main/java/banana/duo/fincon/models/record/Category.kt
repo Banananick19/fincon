@@ -7,7 +7,9 @@ import androidx.room.PrimaryKey
 data class Category (
     @PrimaryKey(autoGenerate = true)
     var id: Int,
-    var name: String
+    var name: String,
+    var color: String,
+    var imagePath: String
 ) {
     override fun toString(): String {
         return this.name
