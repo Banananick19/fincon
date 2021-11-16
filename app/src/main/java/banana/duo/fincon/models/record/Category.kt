@@ -9,7 +9,9 @@ data class Category (
     var id: Int,
     var name: String,
     var color: String,
-    var imagePath: String
+    var imagePath: String,
+    var isExpence: Boolean,
+    var isIncome: Boolean
 ) {
     override fun toString(): String {
         return this.name

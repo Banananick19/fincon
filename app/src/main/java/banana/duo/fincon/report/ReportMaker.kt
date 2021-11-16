@@ -12,8 +12,8 @@ class ReportMaker {
             var income: Map<String, Int> = HashMap()
             for (record in records) {
                 when {
-                    record.value < 0 -> expences = expences.plus(Pair(record.category, record.value + (expences.get(record.category) ?: 0)))
-                    record.value > 0 -> income = income.plus(Pair(record.category, record.value + (income.get(record.category) ?: 0)))
+                    record.category.isExpence -> expences = expences.plus(Pair(record.category.toString(), record.value + (expences.get(record.category.toString()) ?: 0)))
+                    record.category.isIncome -> income = income.plus(Pair(record.category.toString(), record.value + (income.get(record.category.toString()) ?: 0)))
                 }
             }
             return Report(expences, income)

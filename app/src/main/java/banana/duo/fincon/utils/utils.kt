@@ -18,13 +18,13 @@ fun fullCategoryDB() {
     runBlocking {
         launch(Dispatchers.IO) {
             with(CategoryDBContainer.categoryDao) {
-                insertCategory(Category(0,"Транспорт", "#00A1FF", "drive"))
-                insertCategory(Category(0, "Еда", "#FFF731", "food"))
-                insertCategory(Category(0, "Одежда", "#C34FE4", "clothes"))
-                insertCategory(Category(0, "Отдых и развлечения", "#FF7A28", "recreation"))
-                insertCategory(Category(0, "Прочее", "#FF66F0", "other"))
-                insertCategory(Category(0, "Прочее(Доход)", "#FFF731", "other_income"))
-                insertCategory(Category(0, "Зарплата", "#00A1FF", "salary"))
+                insertCategory(Category(0,"Транспорт", "#00A1FF", "drive", true, false))
+                insertCategory(Category(0, "Еда", "#FFF731", "food", true, false))
+                insertCategory(Category(0, "Одежда", "#C34FE4", "clothes", true, false))
+                insertCategory(Category(0, "Отдых и развлечения", "#FF7A28", "recreation", true, false))
+                insertCategory(Category(0, "Прочее", "#FF66F0", "other", true, false))
+                insertCategory(Category(0, "Прочее(Доход)", "#FFF731", "other_income", false, true))
+                insertCategory(Category(0, "Зарплата", "#00A1FF", "salary", false, true))
             }
         }
     }

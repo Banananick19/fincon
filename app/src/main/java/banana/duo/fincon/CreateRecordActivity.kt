@@ -93,18 +93,6 @@ class CreateRecordActivity : AppCompatActivity() {
         return true
     }
 
-//    fun showCategoriesListView() {
-//
-//        val categoriesListView: ListView = findViewById(R.id.categoriesList)
-//        val adapter:ArrayAdapter<String>  = ArrayAdapter(this, android.R.layout.simple_list_item_1,  categories.map {it.toString()})
-//        categoriesListView.adapter = adapter
-//        categoriesListView.setOnItemClickListener(AdapterView.OnItemClickListener() {
-//                parent: AdapterView<*>, v: View, position: Int, id: Long ->
-//            val selectedItem: Category = categories[position]
-//            categorySelected = selectedItem
-//
-//        })
-//    }
 
     fun onDatePick(view: View) {
         val datePicker =
@@ -121,7 +109,7 @@ class CreateRecordActivity : AppCompatActivity() {
     fun onValueInput(view: View) {
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         val text = EditText(this)
-        text.inputType = (InputType.TYPE_CLASS_NUMBER.or(InputType.TYPE_NUMBER_FLAG_SIGNED))
+        text.inputType = InputType.TYPE_CLASS_NUMBER
 
         builder.setTitle(R.string.valueInputDialogTitle).setMessage("").setView(text)
         builder.setPositiveButton("Сохранить", object : DialogInterface.OnClickListener {
@@ -143,7 +131,7 @@ class CreateRecordActivity : AppCompatActivity() {
         if (categorySelected != null && value != null  && dateSelected != null) {
             runBlocking {
                 launch(Dispatchers.IO) {
-                    RecordDBContainer.recordDao.insertRecord(Record(0, categorySelected, value, dateSelected))
+                    RecordDBContainer.recordDao.insertRecord(Record(0, categories.find {category -> category.name == categorySelected }!!, value, dateSelected))
                 }
             }
             Snackbar.make(v, "Запись создана", Snackbar.LENGTH_LONG)

@@ -11,7 +11,7 @@ data class Record (
     @PrimaryKey(autoGenerate = true)
     var id: Int,
 
-    var category: String,
+    var category: Category,
 
     var value: Int,
 
