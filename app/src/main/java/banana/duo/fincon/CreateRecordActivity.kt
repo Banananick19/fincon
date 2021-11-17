@@ -18,6 +18,7 @@ import org.w3c.dom.Text
 import java.util.*
 import banana.duo.fincon.utils.normalDate;
 import android.content.DialogInterface
+import android.graphics.Color
 import android.text.InputType
 
 import android.widget.EditText
@@ -39,7 +40,11 @@ class CreateRecordActivity : AppCompatActivity() {
     lateinit var valueInputView: TextView
     lateinit var categoriesRadioGroup: RadioGroup
     lateinit var categorySelectButton: Button
+    var newCategoryExpence by Delegates.notNull<Boolean>()
+    var newCategoryIncome by Delegates.notNull<Boolean>()
+    lateinit var newCategoryName: String
     var value: Int = 0
+    var newCategory = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,11 +75,20 @@ class CreateRecordActivity : AppCompatActivity() {
             categoriesRadioGroup.addView(button)
             i++
         }
+        val button = RadioButton(this)
+        button.text = resources.getText(R.string.makeOwnCategory)
+        button.id = i + 100
+        button.setOnTouchListener { _, _ -> onTouchCategoryButton(button)}
+        categoriesRadioGroup.addView(button)
         builder.setTitle("").setMessage("").setView(categoriesRadioGroup)
         builder.setPositiveButton("Сохранить", object : DialogInterface.OnClickListener {
             @SuppressLint("SetTextI18n")
             override fun onClick(di: DialogInterface?, i: Int) {
-                categorySelectButton.text = categorySelected
+                if (newCategory) {
+                    makeNewCategoryForm()
+                } else {
+                    categorySelectButton.text = categorySelected
+                }
             }
         })
         builder.setNegativeButton("Отмена", object : DialogInterface.OnClickListener {
@@ -84,8 +98,81 @@ class CreateRecordActivity : AppCompatActivity() {
 
     }
 
+    fun makeNewCategoryForm() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val layout = LinearLayout(this)
+        layout.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        layout.orientation = LinearLayout.VERTICAL
+        val categoryNameInput = EditText(this)
+        categoryNameInput.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        categoryNameInput.hint = "имя"
+        val radioGroup = RadioGroup(this)
+        radioGroup.orientation = RadioGroup.VERTICAL
+        var i = 0
+        for (type in listOf("Расход", "Доход")) {
+            val button = RadioButton(this)
+            button.text = type
+            button.id = i + 100
+            button.setOnTouchListener { _, _ -> onTouchTypeCategoryButton(button)}
+            radioGroup.addView(button)
+            i++
+        }
+        layout.addView(categoryNameInput)
+        layout.addView(radioGroup)
+        builder.setTitle("").setMessage("").setView(layout)
+        builder.setPositiveButton("Сохранить", object : DialogInterface.OnClickListener {
+            @SuppressLint("SetTextI18n")
+            override fun onClick(di: DialogInterface?, i: Int) {
+                newCategoryName = categoryNameInput.text.toString()
+                val zeros = "000000"
+                val rnd = Random()
+                var s = Integer.toString(rnd.nextInt(0X1000000), 16)
+                s = "#${s}"
+                s = zeros.substring(s.length-1) + s
+                val category = Category(0, newCategoryName, s, "other", newCategoryExpence, newCategoryIncome)
+                runBlocking {
+                    launch(Dispatchers.IO) {
+                        CategoryDBContainer.categoryDao.insertCategory(category)
+                    }
+                }
+                categorySelected = category.name
+                categories += category
+                categorySelectButton.text = category.name
+            }
+        })
+        builder.setNegativeButton("Отмена", object : DialogInterface.OnClickListener {
+            override fun onClick(di: DialogInterface?, i: Int) {}
+        })
+        builder.create().show()
+    }
+
+    fun onTouchTypeCategoryButton(v: RadioButton): Boolean {
+        v.isChecked = true
+        when (v.text) {
+            "Расход" ->  {
+                newCategoryExpence = true
+                newCategoryIncome = false
+            }
+            "Доход" -> {
+                newCategoryExpence = false
+                newCategoryIncome = true
+            }
+        }
+        return true
+    }
+
     fun onTouchCategoryButton(v: RadioButton): Boolean {
         v.isChecked = true
+        if (v.text == resources.getText(R.string.makeOwnCategory)) {
+            newCategory = true
+            return true
+        }
         categorySelected = categories.map { category -> category.toString() }.find { category: String -> when {
             category == v.text -> true
             else -> false
@@ -128,28 +215,13 @@ class CreateRecordActivity : AppCompatActivity() {
 
 
     fun createRecord(v: View) {
-        if (categorySelected != null && value != null  && dateSelected != null) {
-            runBlocking {
-                launch(Dispatchers.IO) {
-                    RecordDBContainer.recordDao.insertRecord(Record(0, categories.find {category -> category.name == categorySelected }!!, value, dateSelected))
-                }
+        runBlocking {
+            launch(Dispatchers.IO) {
+                RecordDBContainer.recordDao.insertRecord(Record(0, categories.find {category -> category.name == categorySelected }!!, value, dateSelected))
             }
-            Snackbar.make(v, "Запись создана", Snackbar.LENGTH_LONG)
-                .show();
-        } else {
-            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-            builder.setTitle("Ошибка").setMessage("Заполните все поля")
-            builder.setPositiveButton("Сохранить", object : DialogInterface.OnClickListener {
-                @SuppressLint("SetTextI18n")
-                override fun onClick(di: DialogInterface?, i: Int) {
-
-                }
-            })
-            builder.setNegativeButton("Отмена", object : DialogInterface.OnClickListener {
-                override fun onClick(di: DialogInterface?, i: Int) {}
-            })
-            builder.create().show()
         }
+        Snackbar.make(v, "Запись создана", Snackbar.LENGTH_LONG)
+            .show()
 
     }
 }

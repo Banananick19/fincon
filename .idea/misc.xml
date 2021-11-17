@@ -4,7 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/FinCon/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.14895833333333333" />
-        <entry key="..\:/FinCon/app/src/main/res/drawable/background_main.xml" value="0.2546875" />
+        <entry key="..\:/FinCon/app/src/main/res/drawable/background_main.xml" value="0.264" />
         <entry key="..\:/FinCon/app/src/main/res/drawable/backround_button_main.xml" value="0.2546875" />
         <entry key="..\:/FinCon/app/src/main/res/drawable/circle_border.xml" value="0.13703703703703704" />
         <entry key="..\:/FinCon/app/src/main/res/drawable/empty_tall_divider.xml" value="0.2546875" />
@@ -14,7 +14,7 @@
         <entry key="..\:/FinCon/app/src/main/res/layout/activity_create_record.xml" value="0.1" />
         <entry key="..\:/FinCon/app/src/main/res/layout/activity_main.xml" value="0.18777292576419213" />
         <entry key="..\:/FinCon/app/src/main/res/layout/activity_records_list.xml" value="0.25416666666666665" />
-        <entry key="..\:/FinCon/app/src/main/res/layout/activity_report.xml" value="0.2" />
+        <entry key="..\:/FinCon/app/src/main/res/layout/activity_report.xml" value="0.264" />
         <entry key="..\:/FinCon/app/src/main/res/layout/content_scrolling.xml" value="0.24010416666666667" />
         <entry key="..\:/FinCon/app/src/main/res/layout/dialog_description.xml" value="0.13020833333333334" />
         <entry key="..\:/FinCon/app/src/main/res/menu/menu_records_list.xml" value="0.25416666666666665" />

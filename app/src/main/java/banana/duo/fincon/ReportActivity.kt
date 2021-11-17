@@ -25,6 +25,8 @@ import lecho.lib.hellocharts.model.PointValue
 import lecho.lib.hellocharts.model.PieChartData
 
 import android.R.attr.data
+import android.annotation.SuppressLint
+import android.view.Gravity
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import banana.duo.fincon.db.CategoryDBContainer
@@ -35,25 +37,36 @@ import lecho.lib.hellocharts.util.ChartUtils
 import lecho.lib.hellocharts.model.SliceValue
 import lecho.lib.hellocharts.view.PieChartView
 import android.view.ViewGroup
-
-
-
+import org.w3c.dom.Text
 
 
 class ReportActivity : AppCompatActivity() {
     lateinit var datePeriodStart: Date
     lateinit var datePeriodEnd: Date
     lateinit var categories: List<Category>
+    lateinit var expencesChartView: PieChartView
+    lateinit var incomesChartView: PieChartView
+    lateinit var incomesCountTextView: TextView
+    lateinit var expencesCountTextView: TextView
+    lateinit var layoutCategories: LinearLayout
+    lateinit var dateTextView: TextView
+    var dateSelected = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_report)
         initCategories()
-        showCategories()
+        expencesChartView = findViewById(R.id.expencesChart)
+        incomesChartView = findViewById(R.id.incomesChart)
+        incomesCountTextView = findViewById(R.id.incomesCount)
+        expencesCountTextView = findViewById(R.id.expencesCount)
+        dateTextView = findViewById(R.id.dateView)
+        layoutCategories = findViewById(R.id.categoriesListLayout)
     }
 
-    fun onReportMake(view: View) {
+    @SuppressLint("SetTextI18n")
+    fun onDateRangePick(view: View) {
         val dateRangePicker =
             MaterialDatePicker.Builder.dateRangePicker()
                 .setTitleText("Select dates")
@@ -68,7 +81,8 @@ class ReportActivity : AppCompatActivity() {
         dateRangePicker.addOnPositiveButtonClickListener {
             datePeriodStart = Date(dateRangePicker.selection!!.first)
             datePeriodEnd = Date(dateRangePicker.selection!!.second)
-            renderReport(getReport())
+            dateSelected = true
+            dateTextView.text = "${dateToString(datePeriodStart)}-${dateToString(datePeriodEnd)}"
         }
     }
 
@@ -80,11 +94,26 @@ class ReportActivity : AppCompatActivity() {
         }
     }
 
-    fun showCategories() {
-        val layout = findViewById<LinearLayout>(R.id.categoriesListLayout)
-        for (category in categories) {
-            Log.i("categoryCheck", category.name)
+    fun onIncomesShow(view: View) {
+        if (dateSelected) renderReport(getReport(), "incomes")
+    }
+    fun onExpencesShow(view: View) {
+        if (dateSelected) renderReport(getReport(), "expences")
+    }
+
+    fun showCategories(report: Report, type: String) {
+        val categoriesForShow: List<Category>
+        when (type) {
+            "incomes" -> categoriesForShow = categories.filter {category:Category -> report.income.keys.contains(category.name) }
+            "expences" -> categoriesForShow = categories.filter {category:Category -> report.expences.keys.contains(category.name) }
+            else -> categoriesForShow = listOf()
+        }
+        for (category in categoriesForShow) {
             val container = LinearLayout(this)
+            container.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
             val imageView = ImageView(this)
             imageView.setImageResource(getResId(category.imagePath, R.drawable::class.java))
             imageView.requestLayout()
@@ -94,33 +123,81 @@ class ReportActivity : AppCompatActivity() {
             )
             params.setMargins(0, 0, 20, 0);
             imageView.layoutParams = params
-            val textView = TextView(this)
-            textView.setText(category.name)
-            textView.textSize = 24F
-            textView.setTextColor(Color.parseColor(category.color));
+            val categoryNameTextView = TextView(this)
+            categoryNameTextView.text = category.name
+            categoryNameTextView.textSize = 24F
+            categoryNameTextView.setTextColor(Color.parseColor(category.color))
+            val categoryCountTextView = TextView(this)
+            categoryCountTextView.text = when (type) {
+                "incomes" -> report.income[category.name].toString()
+                "expences" -> report.expences[category.name].toString()
+                else -> ""
+            }
+            categoryCountTextView.gravity = Gravity.END
+            categoryCountTextView.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            categoryCountTextView.textSize = 20F
             container.addView(imageView)
-            container.addView(textView)
-            layout.addView(container, 0)
+            container.addView(categoryNameTextView)
+            container.addView(categoryCountTextView)
+            layoutCategories.addView(container, 0)
         }
     }
 
-    fun renderReport(report: Report) {
-        val expencesValues: MutableList<SliceValue> = ArrayList()
-        for (key in report.expences.keys) {
-            val sliceValue = SliceValue(report.expences[key]!!.toFloat(), Color.parseColor((categories.find {category -> category.name == key })!!.color))
-            expencesValues.add(sliceValue)
+    @SuppressLint("SetTextI18n")
+    fun renderReport(report: Report, type: String) {
+        when (type) {
+            "expences" -> {
+                clearReport()
+                reportExpencesPrepareRender()
+                val expencesValues: MutableList<SliceValue> = ArrayList()
+                for (key in report.expences.keys) {
+                    val sliceValue = SliceValue(report.expences[key]!!.toFloat(), Color.parseColor((categories.find {category -> category.name == key })!!.color))
+                    expencesValues.add(sliceValue)
+                }
+                val dataExpences = PieChartData(expencesValues)
+                expencesChartView.pieChartData = dataExpences
+                expencesCountTextView.text = report.expences.values.fold(0) {count: Int, elem: Int -> count + elem }.toString()
+                showCategories(report, "expences")
+            }
+            "incomes" -> {
+                clearReport()
+                reportIncomesPrepareRender()
+                val incomesValues: MutableList<SliceValue> = ArrayList()
+                for (key in report.income.keys) {
+                    val sliceValue = SliceValue(report.income[key]!!.toFloat(), Color.parseColor((categories.find {category -> category.name == key })!!.color))
+                    incomesValues.add(sliceValue)
+                }
+                val dataIncomes = PieChartData(incomesValues)
+                incomesChartView.pieChartData = dataIncomes
+                incomesCountTextView.text = report.income.values.fold(0) {count: Int, elem: Int -> count + elem }.toString()
+                showCategories(report, "incomes")
+            }
         }
-        val incomesValues: MutableList<SliceValue> = ArrayList()
-        for (key in report.income.keys) {
-            val sliceValue = SliceValue(report.income[key]!!.toFloat(), Color.parseColor((categories.find {category -> category.name == key })!!.color))
-            incomesValues.add(sliceValue)
-        }
-        val expencesChartView: PieChartView = findViewById<PieChartView>(R.id.expencesChart)
-        val incomesChartView: PieChartView = findViewById<PieChartView>(R.id.incomesChart)
-        val dataExpences = PieChartData(expencesValues)
-        val dataIncomes = PieChartData(incomesValues)
-        expencesChartView.pieChartData = dataExpences
-        incomesChartView.pieChartData = dataIncomes
+    }
+
+    fun reportExpencesPrepareRender() {
+        incomesChartView.alpha = 0.3F
+        expencesChartView.alpha = 1F
+    }
+
+    fun reportIncomesPrepareRender() {
+        expencesChartView.alpha = 0.3F
+        incomesChartView.alpha = 1F
+    }
+
+    fun clearReport() {
+        layoutCategories.removeAllViews()
+        val view: View = View(this)
+        view.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        layoutCategories.addView(view)
+        incomesChartView.pieChartData = null
+        expencesChartView.pieChartData = null
     }
 
     fun getReport(): Report {

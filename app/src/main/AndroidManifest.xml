@@ -16,11 +16,6 @@
             android:name=".CreateRecordActivity"
             android:exported="true" />
         <activity
-            android:name=".RecordsListActivity"
-            android:exported="true"
-            android:label="@string/title_activity_records_list"
-            android:theme="@style/Theme.FinCon.NoActionBar" />
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

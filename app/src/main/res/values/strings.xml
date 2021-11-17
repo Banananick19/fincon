@@ -21,4 +21,5 @@
     <string name="Expences">Расходы</string>
     <string name="Incomes">Доходы</string>
     <string name="reportMakeButton">Отчёт</string>
+    <string name="makeOwnCategory">Своя категория</string>
 </resources>
