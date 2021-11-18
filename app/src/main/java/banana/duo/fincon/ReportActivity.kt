@@ -69,7 +69,7 @@ class ReportActivity : AppCompatActivity() {
     fun onDateRangePick(view: View) {
         val dateRangePicker =
             MaterialDatePicker.Builder.dateRangePicker()
-                .setTitleText("Select dates")
+                .setTitleText(resources.getText(R.string.select_date_range))
                 .setSelection(
                     androidx.core.util.Pair(
                         MaterialDatePicker.thisMonthInUtcMilliseconds(),
@@ -148,32 +148,34 @@ class ReportActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     fun renderReport(report: Report, type: String) {
-        when (type) {
-            "expences" -> {
-                clearReport()
-                reportExpencesPrepareRender()
-                val expencesValues: MutableList<SliceValue> = ArrayList()
-                for (key in report.expences.keys) {
-                    val sliceValue = SliceValue(report.expences[key]!!.toFloat(), Color.parseColor((categories.find {category -> category.name == key })!!.color))
-                    expencesValues.add(sliceValue)
+        if (this::datePeriodStart.isInitialized && this::datePeriodEnd.isInitialized) {
+            when (type) {
+                "expences" -> {
+                    clearReport()
+                    reportExpencesPrepareRender()
+                    val expencesValues: MutableList<SliceValue> = ArrayList()
+                    for (key in report.expences.keys) {
+                        val sliceValue = SliceValue(report.expences[key]!!.toFloat(), Color.parseColor((categories.find {category -> category.name == key })!!.color))
+                        expencesValues.add(sliceValue)
+                    }
+                    val dataExpences = PieChartData(expencesValues)
+                    expencesChartView.pieChartData = dataExpences
+                    expencesCountTextView.text = report.expences.values.fold(0) {count: Int, elem: Int -> count + elem }.toString()
+                    showCategories(report, "expences")
                 }
-                val dataExpences = PieChartData(expencesValues)
-                expencesChartView.pieChartData = dataExpences
-                expencesCountTextView.text = report.expences.values.fold(0) {count: Int, elem: Int -> count + elem }.toString()
-                showCategories(report, "expences")
-            }
-            "incomes" -> {
-                clearReport()
-                reportIncomesPrepareRender()
-                val incomesValues: MutableList<SliceValue> = ArrayList()
-                for (key in report.income.keys) {
-                    val sliceValue = SliceValue(report.income[key]!!.toFloat(), Color.parseColor((categories.find {category -> category.name == key })!!.color))
-                    incomesValues.add(sliceValue)
+                "incomes" -> {
+                    clearReport()
+                    reportIncomesPrepareRender()
+                    val incomesValues: MutableList<SliceValue> = ArrayList()
+                    for (key in report.income.keys) {
+                        val sliceValue = SliceValue(report.income[key]!!.toFloat(), Color.parseColor((categories.find {category -> category.name == key })!!.color))
+                        incomesValues.add(sliceValue)
+                    }
+                    val dataIncomes = PieChartData(incomesValues)
+                    incomesChartView.pieChartData = dataIncomes
+                    incomesCountTextView.text = report.income.values.fold(0) {count: Int, elem: Int -> count + elem }.toString()
+                    showCategories(report, "incomes")
                 }
-                val dataIncomes = PieChartData(incomesValues)
-                incomesChartView.pieChartData = dataIncomes
-                incomesCountTextView.text = report.income.values.fold(0) {count: Int, elem: Int -> count + elem }.toString()
-                showCategories(report, "incomes")
             }
         }
     }

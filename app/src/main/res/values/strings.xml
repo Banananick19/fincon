@@ -22,4 +22,13 @@
     <string name="Incomes">Доходы</string>
     <string name="reportMakeButton">Отчёт</string>
     <string name="makeOwnCategory">Своя категория</string>
+    <string name="record_saved">Запись создана</string>
+    <string name="save_button">Сохранить</string>
+    <string name="cancel_button">Отмена</string>
+    <string name="pick_date">Выберете дату</string>
+    <string name="select_date_range">Выберете период</string>
+    <string name="new_category_make">Новая категория</string>
+    <string name="ok_button">Ок</string>
+    <string name="close_button">закрыть</string>
+    <string name="write_in_all_inputs">Заполните все поля</string>
 </resources>

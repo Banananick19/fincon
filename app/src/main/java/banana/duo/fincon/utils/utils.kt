@@ -45,3 +45,12 @@ fun getResId(resName: String, c: Class<*>): Int {
         -1
     }
 }
+
+fun randomColor(): String {
+    val zeros = "000000"
+    val rnd = Random()
+    var s = Integer.toString(rnd.nextInt(0X1000000), 16)
+    s = "#${s}"
+    s = zeros.substring(s.length-1) + s
+    return s
+}

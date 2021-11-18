@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         if (prefs.getBoolean("firstrun", true)) {
             fullCategoryDB()
-            prefs.edit().putBoolean("firstrun", false).commit()
+            prefs.edit().putBoolean("firstrun", false).apply()
         }
     }
 

@@ -27,6 +27,8 @@ import android.widget.RadioGroup
 
 import android.widget.RadioButton
 import androidx.core.view.get
+import banana.duo.fincon.utils.getResId
+import banana.duo.fincon.utils.randomColor
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -40,8 +42,8 @@ class CreateRecordActivity : AppCompatActivity() {
     lateinit var valueInputView: TextView
     lateinit var categoriesRadioGroup: RadioGroup
     lateinit var categorySelectButton: Button
-    var newCategoryExpence by Delegates.notNull<Boolean>()
-    var newCategoryIncome by Delegates.notNull<Boolean>()
+    var newCategoryExpence = false
+    var newCategoryIncome = false
     lateinit var newCategoryName: String
     var value: Int = 0
     var newCategory = false
@@ -53,7 +55,6 @@ class CreateRecordActivity : AppCompatActivity() {
         dateView.setText(dateToString(dateSelected))
         valueInputView = findViewById(R.id.valueInputButton)
         categorySelectButton = findViewById(R.id.categorySelectButton)
-
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -81,7 +82,7 @@ class CreateRecordActivity : AppCompatActivity() {
         button.setOnTouchListener { _, _ -> onTouchCategoryButton(button)}
         categoriesRadioGroup.addView(button)
         builder.setTitle("").setMessage("").setView(categoriesRadioGroup)
-        builder.setPositiveButton("Сохранить", object : DialogInterface.OnClickListener {
+        builder.setPositiveButton(resources.getText(R.string.save_button), object : DialogInterface.OnClickListener {
             @SuppressLint("SetTextI18n")
             override fun onClick(di: DialogInterface?, i: Int) {
                 if (newCategory) {
@@ -91,19 +92,20 @@ class CreateRecordActivity : AppCompatActivity() {
                 }
             }
         })
-        builder.setNegativeButton("Отмена", object : DialogInterface.OnClickListener {
+        builder.setNegativeButton(resources.getText(R.string.cancel_button), object : DialogInterface.OnClickListener {
             override fun onClick(di: DialogInterface?, i: Int) {}
         })
         builder.create().show()
 
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables", "ClickableViewAccessibility")
     fun makeNewCategoryForm() {
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         val layout = LinearLayout(this)
         layout.layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
+            LinearLayout.LayoutParams.MATCH_PARENT
         )
         layout.orientation = LinearLayout.VERTICAL
         val categoryNameInput = EditText(this)
@@ -125,28 +127,24 @@ class CreateRecordActivity : AppCompatActivity() {
         }
         layout.addView(categoryNameInput)
         layout.addView(radioGroup)
-        builder.setTitle("").setMessage("").setView(layout)
-        builder.setPositiveButton("Сохранить", object : DialogInterface.OnClickListener {
+        builder.setTitle("").setMessage(resources.getText(R.string.new_category_make)).setView(layout)
+        builder.setPositiveButton(resources.getText(R.string.save_button), object : DialogInterface.OnClickListener {
             @SuppressLint("SetTextI18n")
             override fun onClick(di: DialogInterface?, i: Int) {
+                if (newCategoryIncome == newCategoryExpence || categoryNameInput.text.toString() == "" ) return
                 newCategoryName = categoryNameInput.text.toString()
-                val zeros = "000000"
-                val rnd = Random()
-                var s = Integer.toString(rnd.nextInt(0X1000000), 16)
-                s = "#${s}"
-                s = zeros.substring(s.length-1) + s
-                val category = Category(0, newCategoryName, s, "other", newCategoryExpence, newCategoryIncome)
+                val category = Category(0, newCategoryName, randomColor(), "new_income3", newCategoryExpence, newCategoryIncome)
                 runBlocking {
                     launch(Dispatchers.IO) {
                         CategoryDBContainer.categoryDao.insertCategory(category)
                     }
                 }
                 categorySelected = category.name
-                categories += category
+                categories = categories + category
                 categorySelectButton.text = category.name
             }
         })
-        builder.setNegativeButton("Отмена", object : DialogInterface.OnClickListener {
+        builder.setNegativeButton(resources.getText(R.string.cancel_button), object : DialogInterface.OnClickListener {
             override fun onClick(di: DialogInterface?, i: Int) {}
         })
         builder.create().show()
@@ -184,7 +182,7 @@ class CreateRecordActivity : AppCompatActivity() {
     fun onDatePick(view: View) {
         val datePicker =
             MaterialDatePicker.Builder.datePicker()
-                .setTitleText("Select date")
+                .setTitleText(resources.getText(R.string.pick_date))
                 .build()
         datePicker.show(supportFragmentManager, "tag");
         datePicker.addOnPositiveButtonClickListener {
@@ -199,14 +197,14 @@ class CreateRecordActivity : AppCompatActivity() {
         text.inputType = InputType.TYPE_CLASS_NUMBER
 
         builder.setTitle(R.string.valueInputDialogTitle).setMessage("").setView(text)
-        builder.setPositiveButton("Сохранить", object : DialogInterface.OnClickListener {
+        builder.setPositiveButton(resources.getText(R.string.save_button), object : DialogInterface.OnClickListener {
             @SuppressLint("SetTextI18n")
             override fun onClick(di: DialogInterface?, i: Int) {
                 value = text.text.toString().toInt()
                 valueInputView.setText(value.toString())
             }
         })
-        builder.setNegativeButton("Отмена", object : DialogInterface.OnClickListener {
+        builder.setNegativeButton(resources.getText(R.string.cancel_button), object : DialogInterface.OnClickListener {
             override fun onClick(di: DialogInterface?, i: Int) {}
         })
         builder.create().show()
@@ -215,13 +213,26 @@ class CreateRecordActivity : AppCompatActivity() {
 
 
     fun createRecord(v: View) {
-        runBlocking {
-            launch(Dispatchers.IO) {
-                RecordDBContainer.recordDao.insertRecord(Record(0, categories.find {category -> category.name == categorySelected }!!, value, dateSelected))
+        if (value != 0 && this::categorySelected.isInitialized) {
+            runBlocking {
+                launch(Dispatchers.IO) {
+                    RecordDBContainer.recordDao.insertRecord(Record(0, categories.find {category -> category.name == categorySelected }!!, value, dateSelected))
+                }
             }
+            Snackbar.make(v, resources.getText(R.string.record_saved), Snackbar.LENGTH_LONG)
+                .show()
+        } else {
+            val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+            builder.setTitle(R.string.valueInputDialogTitle).setMessage(resources.getText(R.string.write_in_all_inputs))
+            builder.setPositiveButton(resources.getText(R.string.ok_button), object : DialogInterface.OnClickListener {
+                @SuppressLint("SetTextI18n")
+                override fun onClick(di: DialogInterface?, i: Int) {
+                }
+            })
+            builder.setNegativeButton(resources.getText(R.string.close_button), object : DialogInterface.OnClickListener {
+                override fun onClick(di: DialogInterface?, i: Int) {}
+            })
+            builder.create().show()
         }
-        Snackbar.make(v, "Запись создана", Snackbar.LENGTH_LONG)
-            .show()
-
     }
 }
